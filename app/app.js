@@ -1,6 +1,7 @@
 var Marionette = require('backbone.marionette')
 var Backbone = require('backbone')
 var App = new Marionette.Application();
+var _ = require('underscore');
 
 var myModule = App.module("kathrin", function(myModule, App, Backbone, Marionette, $, _){
     // Private Data And Functions
@@ -34,10 +35,13 @@ App.on('start', function(options) {
 //   el: "#container"
 // });
 
-// // Add a view to the region. It will automatically render immediately.
+// Add a view to the region. It will automatically render immediately.
 // region.show(new MyView());
+function requireTemplate(src){
+    return _.template( require(src));
+}
 var AppLayout = Marionette.Layout.extend({
-  template:  require('./main.layout.html'),
+  template:  requireTemplate('./main.layout.html'),
 
 //   regions: {
 //     menu: "#menu",
