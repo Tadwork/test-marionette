@@ -3,11 +3,32 @@
 
   <head>
     <title>lv marionette test</title>
+    <style type="text/css">
+      /* YES THIS IS VERY WRONG */
+
+      .test-class-to-add {
+        background: #AB0;
+        border: 1px #099 solid;
+        margin: 1em 0;
+        padding: 1em;
+      }
+
+      .grid-view-class {
+        border: 1px #000 solid;
+        display: inline-block;
+        margin: 0 1em 0 0;
+        padding: .5em;
+      }
+
+    </style>
   </head>
   <body>
     <div id="container">
         
     </div>
+    <div id="catRegion"></div>
+    <div id="catCollectionRegion"></div>
+    <div id="grid"></div>
   </body>
   <script src="bundle.js"></script>
 </html>

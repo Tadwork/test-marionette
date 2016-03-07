@@ -3,7 +3,7 @@ var Backbone = require('backbone')
 var App = new Marionette.Application();
 var _ = require('underscore');
 
-var myModule = App.module("kathrin", function(myModule, App, Backbone, Marionette, $, _){
+var kathrinModule = App.module("kathrin", function(kathrinModule, App, Backbone, Marionette, $, _){
     // Private Data And Functions
     var privateData = "fun with marionette!";
 
@@ -12,21 +12,89 @@ var myModule = App.module("kathrin", function(myModule, App, Backbone, Marionett
     }
 
     // Public Data And Functions
-    myModule.someData = "public data";
+    kathrinModule.someData = "public kathrinModule data";
 
-    myModule.someFunction = function(){
+    kathrinModule.someFunction = function(){
         privateFunction();
-        console.log(myModule.someData);
+        console.log(kathrinModule.someData);
     }
 });
+
+//collections silly business
+var GridRow = Backbone.Marionette.ItemView.extend({
+  template: requireTemplate('./main.catItem.html'),
+  tagName: 'p',
+  className: "grid-view-class"
+});
+
+var GridView = Backbone.Marionette.CompositeView.extend({
+
+  itemView: GridRow,
+  itemViewContainer: "#gridID",
+  template: requireTemplate('./main.gridTemplate.html')
+});
+
+
+
+var gridView;
+
+
+//cat silly business
+
+var CatModel = Backbone.Model.extend({});
+var AllTheCats = Backbone.Collection.extend({
+  model: CatModel
+});
+
+var UserCollection = Backbone.Collection.extend({
+  model: CatModel
+});
+
+var CatListView = Backbone.Marionette.ItemView.extend({
+  template: requireTemplate('./main.catItem.html'),
+  tagName: "div",
+  className: "cat-listing-item"
+});
+
+var CatListCollectionView = Backbone.Marionette.CollectionView.extend({
+
+  tagName: "div",
+  id: "cat-collection-view",
+  className: "test-class-to-add",
+  template: requireTemplate('./main.catList.html'),
+  itemView: CatListView,
+});
+
 
 App.on('initialize:before', function(options) {
   options.anotherThing = true; // Add more data to your options
 });
+
 App.on('initialize:after', function(options) {
   console.log('Initialization Finished');
 });
+
 App.on('start', function(options) {
+  var catView = new CatListCollectionView({
+    collection: options.cats
+  });
+
+  var userCollection = new UserCollection(options.cats);
+
+  console.log("what's up here with this?", options.cats)
+
+  this.catRegion.show(catView);
+
+
+  gridView = new GridView({
+    collection: options.cats
+  });
+
+  gridView.render();
+  this.collectionRegion.show(gridView);
+
+  var layout = new AppLayout();
+  this.mainRegion.show(layout);
   Backbone.history.start(); // Great time to do this
 });
 
@@ -50,9 +118,24 @@ var AppLayout = Marionette.Layout.extend({
 });
 
 App.addRegions({
-  mainRegion: "#container"
+  mainRegion: "#container",
+  catRegion: "#catRegion",
+  collectionRegion: "#catCollectionRegion"
 });
 
-var layout = new AppLayout();
-App.mainRegion.show(layout);
-App.kathrin.someFunction();
+App.addInitializer(function(options){
+  console.log("what is up with this?")
+});
+
+//======================= START THE APP =======================//
+
+var cats = new AllTheCats([
+    { name: 'cat-tool'},
+    { name: 'cat-control'},
+    { name: 'cat-model'}
+  ]);
+
+App.start({cats: cats});
+
+
+// App.kathrin.someFunction();
